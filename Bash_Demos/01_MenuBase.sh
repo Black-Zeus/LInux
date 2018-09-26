@@ -1,13 +1,14 @@
 #!/bin/bash
+##########################################################################################
+## Author: Black-Zeus                                                                  ###
+## Created: 2018-09-25                                                                 ###
+## Description: Este Script genera un Menu base para la Aplicacion de diversas         ###
+##              funciones de mantenimiento y automatiazación                           ###
+##########################################################################################
 
-####################################################
-# Author: Black-Zeus
-# Created: 2018-09-25
-# Description: Este Script genera un Menu base para la Aplicacion de diversas
-#               funciones de mantenimiento y automatiazación
-####################################################
-
-### Funciones y Procedimientos ####
+##########################################################################################
+### Boque de Presentacion                                                              ###
+##########################################################################################
 fn_banner() {
     if hash figlet 2>/dev/null; then
         figlet Black-Zeus
@@ -29,20 +30,17 @@ fn_banner() {
     echo "";
 }
 
-fn_HoraSystem() {
-    if hash gdate 2>/dev/null; then
-        gdate "$@"
-    else
-        date "$@"
-    fi
-}
-
-fn_checkroot(){
-  if ! [ $(id -u) = 0 ]; then
-    echo "$USER no es usuario ROOT"
-  else
-    echo "$USER es usuario ROOT"
-  fi
+fn_OpcionesMenu(){
+  echo ""
+  echo "-- Script de automatiazación y Actualizacion";
+  echo "";
+  echo "-- Seleccione una de las siguientes opciones";
+  echo "-> 1.- Informacion del sistema";
+  echo "-> 2.- Informacion Reinicios y Login '$(whoami)'";
+  echo "-> 3.- Actualizar Sistema (Automatizado)";
+  echo "-> 4.- Instalar Programas Imprescindibles (Automatizado)";
+  echo "-> 0.- Cerrar";
+  echo "";
 }
 
 fn_checkroot_Bool(){
@@ -51,6 +49,40 @@ fn_checkroot_Bool(){
   else
     return 0;
   fi
+}
+
+fn_SalirBash(){
+  clear
+  fn_banner;
+
+  echo "";
+  echo "Gracias por Emplear este Script";
+  fn_PleaseWait;
+  reset
+}
+
+fn_PleaseWait(){
+  echo "";
+  read -p "<<-- Presione la tecla [ENTER] para Continuar -->>";
+}
+
+##########################################################################################
+### Bloque Seccion: Informacion del sistema                                            ###
+##########################################################################################
+fn_checkroot(){
+  if ! fn_checkroot_Bool; then
+    echo "$USER no es usuario ROOT"
+  else
+    echo "$USER es usuario ROOT"
+  fi
+}
+
+fn_HoraSystem() {
+    if hash gdate 2>/dev/null; then
+        gdate "$@"
+    else
+        date "$@"
+    fi
 }
 
 fn_InfoSession(){
@@ -96,37 +128,69 @@ fn_InfoSession(){
   echo "";
 }
 
+##########################################################################################
+### Bloque Seccion: Informacion Reinicios y Login                                      ###
+##########################################################################################
 fn_UtimosAccesos(){
   clear
 
   ### Datos Ultimos 5 Accesos
   echo "-------------------------------------";
-  echo "-- Ultimos 5 Accesos           ";
+  echo "-- Ultimos 5 Accesos                 ";
   echo "-------------------------------------";
   last -5 -diwx $USER
 
+  if fn_checkroot_Bool; then
+	echo "-------------------------------------";
+	echo "-- Ultimos 5 Accesos Fallidos        ";
+	echo "-------------------------------------";
+	last -5 -diwx $USER
+  fi
+
   ### Datos Ultimos 5 Accesos
   echo "-------------------------------------";
-  echo "-- Ultimos 5 Reinicios                 ";
+  echo "-- Ultimos 5 Reinicios               ";
   echo "-------------------------------------";
   last reboot -F | head -5
+
+  ### Listado de Usuario del sistema
+  fn_GetAllUser;
 }
 
-fn_PleaseWait(){
+fn_GetAllUser(){
+	#######################################################################################################
+	# Este bloque se extrae desde https://www.cyberciti.biz/faq/linux-list-users-command/                 #
+	# Name: listusers.bash                                                                                #
+	# Purpose: List all normal user and system accounts in the system. Tested on RHEL / Debian Linux      #
+	# Author: Vivek Gite <www.cyberciti.biz>, under GPL v2.0+                                             #
+	#######################################################################################################
+
+	_l="/etc/login.defs"
+	_p="/etc/passwd"
+
+	## get mini UID limit ##
+	l=$(grep "^UID_MIN" $_l)
+
+	## get max UID limit ##
+	l1=$(grep "^UID_MAX" $_l)
+
   echo "";
-  read -p "<<-- Presione la tecla [ENTER] para Continuar -->>";
+	echo "-------------------------------------";
+	echo "-- Usuarios del Sistema               ";
+	echo "-------------------------------------";
+
+	## use awk to print if UID >= $MIN and UID <= $MAX and shell is not /sbin/nologin   ##
+	echo ">> Usuarios Normales"
+	awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( $3 >= min && $3 <= max  && $7 != "/sbin/nologin" ) print $0 }' "$_p"
+
+	## echo ""
+	## echo "----------[ Cuentas de Usuarios del Sistema ]---------------"
+	## awk -F':' -v "min=${l##UID_MIN}" -v "max=${l1##UID_MAX}" '{ if ( !($3 >= min && $3 <= max  && $7 != "/sbin/nologin")) print $0 }' "$_p"
 }
 
-fn_SalirBash(){
-  clear
-  fn_banner;
-
-  echo "";
-  echo "Gracias por Emplear este Script";
-  fn_PleaseWait;
-  reset
-}
-
+##########################################################################################
+### Bloque Seccion: Actualizar Sistema (Automatizado)                                  ###
+##########################################################################################
 fn_UpdatePrivado(){
   echo "";
   echo "Actualizando Repositorios 'apt-get update'";
@@ -193,6 +257,9 @@ fn_UpdateSystem(){
   fi
 }
 
+##########################################################################################
+### Bloque Seccion: Instalar Programas Imprescindibles                                 ###
+##########################################################################################
 fn_InstallSistem(){
   if fn_checkroot_Bool; then
   NombreLog="Log_Install_"$(date +"%Y%m%d")."txt";
@@ -256,21 +323,17 @@ fn_InstallSistem(){
   fi
 }
 
-fn_OpcionesMenu(){
-  echo ""
-  echo "-- Script de automatiazación y Actualizacion";
+##########################################################################################
+### Bloque Seccion: Instalar Programas Imprescindibles                                 ###
+##########################################################################################
+fn_OPcionErronea(){
   echo "";
-  echo "-- Seleccione una de las siguientes opciones";
-  echo "-> 1.- Informacion del sistema";
-  echo "-> 2.- Informacion Reinicios y Login '$(whoami)'";
-  echo "-> 3.- Actualizar Sistema (Automatizado)";
-  echo "-> 4.- Instalar Programas Imprescindibles (Automatizado)";
-  echo "-> 0.- Cerrar";
-  echo "";
+  echo "<<-- La Opcion ingresada no es Valida -->>";
 }
-########################################
-### Bucle a cargo de mostrar el Menu ###
-########################################
+
+##########################################################################################
+### Bloque Seccion: Bucle a cargo de mostrar el Menu                                   ###
+##########################################################################################
 display_main_menu() {
 
     while true; do
@@ -286,13 +349,13 @@ display_main_menu() {
         3 ) reset; fn_UpdateSystem; fn_PleaseWait;;
         4 ) reset; fn_InstallSistem; fn_PleaseWait;;
         0 ) fn_SalirBash; exit;;
-        * ) echo "Opcion No Valida."; fn_PleaseWait;;
+        * ) echo fn_OPcionErronea; fn_PleaseWait;;
       esac
     done
 }
 
-#######################
-### Llamada al Menu ###
-#######################
+##########################################################################################
+### Bloque Seccion: Llamada al Menu                                                    ###
+##########################################################################################
 reset
 display_main_menu;
