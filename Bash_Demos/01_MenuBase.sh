@@ -40,6 +40,14 @@ fn_checkroot(){
   fi
 }
 
+fn_checkroot_Bool(){
+  if ! [ $(id -u) = 0 ]; then
+    return 1;
+  else
+    return 0;
+  fi
+}
+
 fn_InfoSession(){
   clear
   ### Datos de La Version ##
@@ -62,24 +70,41 @@ fn_InfoSession(){
   echo "-------------------------------------"
   echo "";
 
+  ### Datos de Usuario COnectado ##
+  echo "-------------------------------------";
+  echo "-- UpTime           ";
+  echo "-------------------------------------";
+  echo "-- Hora Encendido: $(uptime -s) ||  Horas Encendido: $(uptime -p)";
+  echo "";
+
+  ### Datos de HardWare ##
+  echo "-------------------------------------";
+  echo "-- Memoria                 ";
+  echo "-------------------------------------";
+  free -ht
+
+  echo "";
+  echo "-------------------------------------";
+  echo "-- Disco Duro                 ";
+  echo "-------------------------------------";
+  df -h /
+  echo "";
+}
+
+fn_UtimosAccesos(){
+  clear
+
   ### Datos Ultimos 5 Accesos
   echo "-------------------------------------";
   echo "-- Ultimos 5 Accesos           ";
   echo "-------------------------------------";
-  last -5 -diwx vsoto
-}
+  last -5 -diwx $USER
 
-fn_OpcionesMenu(){
-  echo ""
-  echo "-- Script de automatiazación y Actualizacion";
-  echo "";
-  echo "-- Seleccione una de las siguientes opciones";
-  echo "-> 1.- Informacion del sistema";
-  echo "-> 2.- Instalacion de Progamas Impresindibles Automatizado";
-  echo "-> 3.- Instalacion de Progamas Impresindibles Manual";
-  echo "-> 4.- Instalacion LAMP Automatizado";
-  echo "-> 0.- Cerrar";
-  echo "";
+  ### Datos Ultimos 5 Accesos
+  echo "-------------------------------------";
+  echo "-- Ultimos 5 Reinicios                 ";
+  echo "-------------------------------------";
+  last reboot -F | head -5
 }
 
 fn_PleaseWait(){
@@ -88,7 +113,7 @@ fn_PleaseWait(){
 }
 
 fn_SalirBash(){
-  reset
+  clear
   fn_banner;
 
   echo "";
@@ -96,7 +121,76 @@ fn_SalirBash(){
   fn_PleaseWait;
 }
 
+fn_UpdateSystem(){
+  if fn_checkroot_Bool; then
+  NombreLog="Log_Actualiza_"$(date +"%Y%m%d")."txt"
 
+  echo "-------------------------------------";
+  echo "-- Proceso de Actualizacion de sistema";
+  echo "-------------------------------------";
+  echo "";
+  echo "Actualizando Repositorios 'apt-get update'";
+  echo "-> Upgrade" > $NombreLog 2>&1;
+  apt-get update > $NombreLog 2>&1;
+
+  echo "";
+  echo "Actualizando Sistema";
+  echo "-> Upgrade";
+
+  echo "Actualizando Sistema" > $NombreLog;
+  echo "-> Upgrade" 2>&1 > $NombreLog;
+  apt-get upgrade -y 2>&1 > $NombreLog;
+
+  echo "-> Instalando Dependencias Incumplidas";
+  echo "-> Instalando Dependencias Incumplidas" > $NombreLog;
+  apt-get -f install -y 2>&1 > $NombreLog;
+
+  echo "-> Dist-Upgrade";
+  echo "-> Dist-Upgrade" > $NombreLog;
+  apt-get dist-upgrade -y 2>&1 > $NombreLog;
+
+  echo "-> Full-Upgrade";
+  echo "" > $NombreLog;
+  echo "-> Full-Upgrade" > $NombreLog;
+  apt-get full-upgrade -y 2>&1 > $NombreLog;
+
+  echo "";
+  echo "Tareas de Mantenimiento";
+  echo "-> Quitando paquetes no necesarios";
+
+  echo "" > $NombreLog;
+  echo "Tareas de Mantenimiento" > $NombreLog;
+  echo "-> Quitando paquetes no necesarios" > $NombreLog;
+  apt-get auto-remove -y 2>&1 > $NombreLog;
+
+  echo "-> Quitando Temporales y Basuta";
+
+  echo "" > $NombreLog;
+  echo "-> Quitando Temporales y Basuta" > $NombreLog;
+  apt-get auto-clean -y 2>&1 > $NombreLog;
+  apt-get clean -y 2>&1 > $NombreLog;
+  sync 2>&1 > $NombreLog;
+
+  echo "";
+  echo "< Proceso de Actualizacion Terminado >";
+  fn_PleaseWait;
+  else
+    echo "Su Usuario no posee permisos de Root"
+  fi
+}
+
+fn_OpcionesMenu(){
+  echo ""
+  echo "-- Script de automatiazación y Actualizacion";
+  echo "";
+  echo "-- Seleccione una de las siguientes opciones";
+  echo "-> 1.- Informacion del sistema";
+  echo "-> 2.- Informacion Reinicios y Login '$(whoami)'";
+  echo "-> 3.- Actualizar Sistema (Automatizado)";
+  echo "-> 4.- Instalacion LAMP Automatizado";
+  echo "-> 0.- Cerrar";
+  echo "";
+}
 ########################################
 ### Bucle a cargo de mostrar el Menu ###
 ########################################
@@ -110,7 +204,9 @@ display_main_menu() {
       read -p "Ingrese opcion: " OpcSeleccion;
 
       case $OpcSeleccion in
-        1 ) fn_InfoSession; fn_PleaseWait;;
+        1 ) reset; fn_InfoSession; fn_PleaseWait;;
+        2 ) reset; fn_UtimosAccesos; fn_PleaseWait;;
+        3 ) reset; fn_UpdateSystem; fn_PleaseWait;;
         0 ) fn_SalirBash; exit;;
         * ) echo "Opcion No Valida."; fn_PleaseWait;;
       esac
