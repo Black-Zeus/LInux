@@ -12,9 +12,14 @@ fn_banner() {
     if hash figlet 2>/dev/null; then
         figlet Black-Zeus
     else
-        echo "-------------------";
-        echo "--  Back - Zeus  --"
-        echo "-------------------";
+        if fn_checkroot_Bool; then
+          apt-get install -y figlet  2>&1 >> /dev/null;
+          figlet Black-Zeus
+        else
+          echo "-------------------";
+          echo "--  Back - Zeus  --";
+          echo "-------------------";
+        fi
     fi
 
     ### Datos del Banner ##
@@ -119,11 +124,15 @@ fn_SalirBash(){
   echo "";
   echo "Gracias por Emplear este Script";
   fn_PleaseWait;
+  reset
 }
 
 fn_UpdatePrivado(){
   echo "";
   echo "Actualizando Repositorios 'apt-get update'";
+  echo "Actualizando Repositorios 'apt-get update'" >> $NombreLog 2>&1;
+
+  echo "-> Update";
   echo "-> Update" >> $NombreLog 2>&1;
   apt-get update >> $NombreLog 2>&1;
 
@@ -132,7 +141,7 @@ fn_UpdatePrivado(){
   echo "Actualizando Sistema" >> $NombreLog;
 
   echo "-> Upgrade";
-  echo "-> Upgrade" >> 2>&1 >> $NombreLog;
+  echo "-> Upgrade" >> $NombreLog 2>&1;
   apt-get upgrade -y 2>&1 >> $NombreLog;
 
   echo "-> Instalando Dependencias Incumplidas";
@@ -198,41 +207,41 @@ fn_InstallSistem(){
   apt-get install ubuntu-restricted-extras >> $NombreLog 2>&1;
 
   echo "-> Compresores";
-  echo "-> Compresores" >> 2>&1 >> $NombreLog;
+  echo "-> Compresores" >> $NombreLog 2>&1;
   apt-get install -y unace rar unrar p7zip-rar p7zip sharutils uudeview mpack arj cabextract lzip lunzip 2>&1 >> $NombreLog;
 
   echo "-> VLC";
-  echo "-> VLC" >> 2>&1 >> $NombreLog;
+  echo "-> VLC" >> $NombreLog 2>&1;
   apt-get install -y vlc 2>&1 >> $NombreLog;
 
   echo "-> Java";
-  echo "-> Java" >> 2>&1 >> $NombreLog;
+  echo "-> Java" >> $NombreLog 2>&1;
   apt-get purge -y openjdk* 2>&1 >> $NombreLog;
   add-apt-repository -y ppa:webupd8team/java 2>&1 >> $NombreLog;
   apt-get update 2>&1 >> $NombreLog;
   apt-get install -y oracle-java8-set-default openjdk-8-jre 2>&1 >> $NombreLog;
 
   echo "-> Gdebi";
-  echo "-> Gdebi" >> 2>&1 >> $NombreLog;
+  echo "-> Gdebi" >> $NombreLog 2>&1;
   apt-get install -y  gdebi 2>&1 >> $NombreLog;
 
   echo "-> IceTea";
-  echo "-> IceTea" >> 2>&1 >> $NombreLog;
+  echo "-> IceTea" >> $NombreLog 2>&1;
   apt-get install -y  icedtea-plugin 2>&1 >> $NombreLog;
 
   echo "-> TPL (Bateria)";
-  echo "-> TPL (Bateria)" >> 2>&1 >> $NombreLog;
+  echo "-> TPL (Bateria)" >> $NombreLog 2>&1;
   add-apt-repository -y ppa:linrunner/tlp 2>&1 >> $NombreLog;
   apt-get update 2>&1 >> $NombreLog;
   apt-get install -y tlp tlp-rdw 2>&1 >> $NombreLog;
   tlp start 2>&1 >> $NombreLog;
 
   echo "-> HTOP";
-  echo "-> HTOP" >> 2>&1 >> $NombreLog;
+  echo "-> HTOP" >> $NombreLog 2>&1;
   apt-get install -y htop 2>&1 >> $NombreLog;
 
   echo "-> Wine, PlayOnLinux";
-  echo "-> Wine, PlayOnLinux" >> 2>&1 >> $NombreLog;
+  echo "-> Wine, PlayOnLinux" >> $NombreLog 2>&1;
   apt-get install -y wine-stable playonlinux 2>&1 >> $NombreLog;
 
   echo "";
