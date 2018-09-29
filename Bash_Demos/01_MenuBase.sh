@@ -111,7 +111,8 @@ fn_InfoSession(){
   echo "-------------------------------------";
   echo "-- UpTime           ";
   echo "-------------------------------------";
-  echo "-- Hora Encendido: $(uptime -s) ||  Horas Encendido: $(uptime -p)";
+  echo "-- Hora Encendido: $(uptime -s)";
+  echo "-- Horas Encendido: $(uptime -p)";
   echo "";
 
   ### Datos de HardWare ##
