@@ -258,6 +258,28 @@ fn_UpdateSystem(){
   fi
 }
 
+fn_UnLock(){
+  if fn_checkroot_Bool; then
+  NombreLog="Log_Actualiza_"$(date +"%Y%m%d")."txt"
+  rm -rf $NombreLog 2>&1;
+
+  echo "-------------------------------------";
+  echo "-- Quitar Bloqueo para instalacion   ";
+  echo "-------------------------------------";
+
+  fuser -vki  /var/lib/dpkg/lock
+  rm -f /var/lib/dpkg/lock
+  dpkg --configure -a
+  apt-get auto-remove
+  apt-get auto-clean
+
+  echo "";
+  echo "< Proceso de Desbloqueo Terminado >";
+  else
+    echo "Debe ser usuario ROOT para ejecutar este Procedimiento"
+  fi
+}
+
 ##########################################################################################
 ### Bloque Seccion: Instalar Programas Imprescindibles                                 ###
 ##########################################################################################
@@ -349,6 +371,7 @@ display_main_menu() {
         2 ) reset; fn_UtimosAccesos; fn_PleaseWait;;
         3 ) reset; fn_UpdateSystem; fn_PleaseWait;;
         4 ) reset; fn_InstallSistem; fn_PleaseWait;;
+        5 ) reset; fn_UnLock; fn_PleaseWait;;
         0 ) fn_SalirBash; exit;;
         * ) echo fn_OPcionErronea; fn_PleaseWait;;
       esac
