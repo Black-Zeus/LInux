@@ -39,6 +39,7 @@ fn_OpcionesMenu(){
   echo "-> 2.- Informacion Reinicios y Login '$(whoami)'";
   echo "-> 3.- Actualizar Sistema (Automatizado)";
   echo "-> 4.- Instalar Programas Imprescindibles (Automatizado)";
+  echo "-> 5.- Desbloqueo para instalacion y Actualizacion";
   echo "-> 0.- Cerrar";
   echo "";
 }
