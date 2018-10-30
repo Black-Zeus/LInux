@@ -374,7 +374,7 @@ display_main_menu() {
         4 ) reset; fn_InstallSistem; fn_PleaseWait;;
         5 ) reset; fn_UnLock; fn_PleaseWait;;
         0 ) fn_SalirBash; exit;;
-        * ) echo fn_OPcionErronea; fn_PleaseWait;;
+        * ) fn_OPcionErronea; fn_PleaseWait;;
       esac
     done
 }
