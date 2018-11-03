@@ -344,6 +344,7 @@ fn_InstallSistem(){
   echo "< Proceso de Actualizacion Terminado >";
   else
     echo "Debe ser usuario ROOT para ejecutar este Procedimiento";
+  fi
 }
 
 ##########################################################################################
