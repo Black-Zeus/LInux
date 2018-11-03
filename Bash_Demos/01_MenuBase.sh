@@ -295,7 +295,7 @@ fn_InstallSistem(){
   echo "";
   echo "-> Codecs";
   echo "-> Codecs" >> $NombreLog 2>&1;
-  apt-get install ubuntu-restricted-extras >> $NombreLog 2>&1;
+  apt-get -y install ubuntu-restricted-extras >> $NombreLog 2>&1;
 
   echo "-> Compresores";
   echo "-> Compresores" >> $NombreLog 2>&1;
@@ -305,12 +305,12 @@ fn_InstallSistem(){
   echo "-> VLC" >> $NombreLog 2>&1;
   apt-get install -y vlc 2>&1 >> $NombreLog;
 
-  echo "-> Java";
-  echo "-> Java" >> $NombreLog 2>&1;
-  apt-get purge -y openjdk* 2>&1 >> $NombreLog;
-  add-apt-repository -y ppa:webupd8team/java 2>&1 >> $NombreLog;
-  apt-get update 2>&1 >> $NombreLog;
-  apt-get install -y oracle-java8-set-default openjdk-8-jre 2>&1 >> $NombreLog;
+  #echo "-> Java";
+  #echo "-> Java" >> $NombreLog 2>&1;
+  #apt-get purge -y openjdk* 2>&1 >> $NombreLog;
+  #add-apt-repository -y ppa:webupd8team/java 2>&1 >> $NombreLog;
+  #apt-get update 2>&1 >> $NombreLog;
+  #apt-get install -y oracle-java8-set-default openjdk-8-jre 2>&1 >> $NombreLog;
 
   echo "-> Gdebi";
   echo "-> Gdebi" >> $NombreLog 2>&1;
@@ -320,12 +320,12 @@ fn_InstallSistem(){
   echo "-> IceTea" >> $NombreLog 2>&1;
   apt-get install -y  icedtea-plugin 2>&1 >> $NombreLog;
 
-  echo "-> TPL (Bateria)";
-  echo "-> TPL (Bateria)" >> $NombreLog 2>&1;
-  add-apt-repository -y ppa:linrunner/tlp 2>&1 >> $NombreLog;
-  apt-get update 2>&1 >> $NombreLog;
-  apt-get install -y tlp tlp-rdw 2>&1 >> $NombreLog;
-  tlp start 2>&1 >> $NombreLog;
+  #echo "-> TPL (Bateria)";
+  #echo "-> TPL (Bateria)" >> $NombreLog 2>&1;
+  #add-apt-repository -y ppa:linrunner/tlp 2>&1 >> $NombreLog;
+  #apt-get update 2>&1 >> $NombreLog;
+  #apt-get install -y tlp tlp-rdw 2>&1 >> $NombreLog;
+  #tlp start 2>&1 >> $NombreLog;
 
   echo "-> HTOP";
   echo "-> HTOP" >> $NombreLog 2>&1;
@@ -344,7 +344,6 @@ fn_InstallSistem(){
   echo "< Proceso de Actualizacion Terminado >";
   else
     echo "Debe ser usuario ROOT para ejecutar este Procedimiento";
-  fi
 }
 
 ##########################################################################################
